@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Go‘sht hisobi</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#10a37f"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Go‘sht hisobi">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bgfx" id="bgfx" aria-hidden="true"></div>
+<div class="app">
+  <div class="inst" id="inst" hidden><span>Ilovani telefoningiz bosh ekraniga o‘rnating</span><button class="ib" data-act="install">Yuklab olish</button><button class="ix" data-act="instX" aria-label="Yopish">×</button></div>
+  <header class="bar">
+    <div class="dn"><button data-act="nav" data-n="-1" aria-label="Oldingi kun">‹</button><input type="date" id="dt"><button data-act="nav" data-n="1" aria-label="Keyingi kun">›</button></div>
+    <button class="thm" id="thm" data-act="themeT" aria-label="Oq / qora rang">☾</button>
+    <button class="clr" data-act="clr">Tozalash</button>
+    <div class="clk"><b id="clkD"></b><span id="clkT"></span></div>
+    
+  </header>
+
+  <section class="row r1" data-s="1"><div class="rh"><i>1</i><h2 data-tk="r1">Mahsulotlar</h2></div><div class="tb" id="t1"></div></section>
+  <section class="row r2" data-s="2"><div class="rh"><i>2</i><h2 data-tk="r2">Sotuv hisobi</h2><span class="sp"></span><span class="rt" id="tRev"></span></div><div class="tb" id="t2"></div></section>
+  <section class="row r3" data-s="3"><div class="rh"><i>3</i><h2 data-tk="r3">Xarajatlar</h2><span class="sp"></span><span class="rt" id="tExp"></span><button class="lst" data-act="listExp" id="lExp"></button></div>
+    <div class="fl"><input id="en" placeholder="Xarajat turi" autocomplete="off"><input id="ea" inputmode="decimal" placeholder="Summa"><button class="add" data-act="addExp" aria-label="Qo‘shish">+</button></div></section>
+  <section class="row r4" data-s="4"><div class="rh"><i>4</i><h2 data-tk="r4">Qarzlar</h2><span class="sp"></span><span class="rt" id="tDebt"></span><button class="lst" data-act="listDebt" id="lDebt"></button></div>
+    <div class="fl fl4"><input id="qn" placeholder="Qarz egasi" autocomplete="off"><input id="qp" inputmode="tel" placeholder="Telefon" autocomplete="off"><input id="qa" inputmode="decimal" placeholder="Summa"><button class="add" data-act="addDebt" aria-label="Qo‘shish">+</button></div>
+    <div class="jq"><span>Jami qarz</span><b id="hDebt">0</b></div></section>
+
+  <section class="row r5b" data-s="5"><div class="rh"><i>5</i><h2 data-tk="r5">Foyda hisobi</h2></div><div class="tb" id="t5"></div></section>
+  <section class="row r5" data-s="6">
+    <div class="rh"><i>6</i><h2 data-tk="r6">Jami hisob</h2><span class="sp"></span><button class="gal" data-act="gal" id="gal">Galereyaga saqlash</button></div>
+    <div class="eq">
+      <div class="sc"><small>Xarajat (3)</small><b id="fExp"></b></div><i>=</i>
+      <div class="sc"><small>Jami chiqim</small><b id="fOut"></b></div>
+    </div>
+    <div class="eq eb">
+      <div class="sc"><small>Chiqim</small><b id="fOut2"></b></div><i>−</i>
+      <div class="sc"><small>Tushum (2)</small><b id="fRev"></b></div><i>=</i>
+      <div class="sc res" id="fRes"><small id="fFl">FOYDA</small><b id="fF"></b></div>
+    </div>
+    <div class="n5"><span>Foyda hisobi (5-qator)</span><b id="fP5"></b></div>
+    <div class="ext" id="fExt"></div>
+  </section>
+  <section class="row r7" data-s="7"><div class="rh"><i>7</i><h2 data-tk="r7">Barcha qarzdorlar</h2><span class="sp"></span><span class="rt" id="tD7"></span></div><div class="d7" id="d7"></div></section>
+  <nav class="nav4">
+    <button data-act="pg" data-k="admin">Admin panel</button>
+    <button data-act="pg" data-k="week">1 haftalik</button>
+    <button data-act="pg" data-k="month">1 oylik</button>
+    <button data-act="pg" data-k="year">1 yillik</button>
+  </nav>
+</div>
+
+<div class="pg" id="pg" hidden><div class="pgh"><b id="pgT"></b><button data-act="pgx" aria-label="Yopish">×</button></div><div id="pgB"></div></div>
+<div class="ov" id="ov" hidden><div class="sheet"><div class="sh"><b id="shT"></b><button data-act="close" aria-label="Yopish">×</button></div><div id="shB"></div></div></div>
+<nav class="stabs" id="stabs" aria-label="Sahifalar"><button data-act="st" data-i="1"><b>1</b><span>Mahsulot</span></button><button data-act="st" data-i="2"><b>2</b><span>Sotuv</span></button><button data-act="st" data-i="3"><b>3</b><span>Xarajat</span></button><button data-act="st" data-i="4"><b>4</b><span>Qarz</span></button><button data-act="st" data-i="5"><b>5</b><span>Foyda</span></button><button data-act="st" data-i="6"><b>6</b><span>Jami</span></button><button data-act="st" data-i="7"><b>7</b><span>Qarzdor</span></button></nav>
+<script src="app.js"></script>
+</body>
+</html>
