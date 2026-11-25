@@ -24,7 +24,7 @@
   <section class="row r1" data-s="1"><div class="rh"><i>1</i><h2 data-tk="r1">Mahsulotlar</h2></div><div class="tb" id="t1"></div></section>
   <section class="row r2" data-s="2"><div class="rh"><i>2</i><h2 data-tk="r2">Sotuv hisobi</h2><span class="sp"></span><span class="rt" id="tRev"></span></div><div class="tb" id="t2"></div></section>
   <section class="row r3" data-s="3"><div class="rh"><i>3</i><h2 data-tk="r3">Xarajatlar</h2><span class="sp"></span><span class="rt" id="tExp"></span><button class="lst" data-act="listExp" id="lExp"></button></div>
-    <div class="fl"><input id="en" placeholder="Xarajat turi" autocomplete="off"><input id="ea" inputmode="decimal" placeholder="Summa"><button class="add" data-act="addExp" aria-label="Qo‘shish">+</button></div></section>
+    <div class="fl"><input id="en" placeholder="Xarajat turi" autocomplete="off"><input id="ea" inputmode="text" placeholder="Summa (100+23)"><button class="add" data-act="addExp" aria-label="Qo‘shish">+</button></div></section>
   <section class="row r4" data-s="4"><div class="rh"><i>4</i><h2 data-tk="r4">Qarzlar</h2><span class="sp"></span><span class="rt" id="tDebt"></span><button class="lst" data-act="listDebt" id="lDebt"></button></div>
     <div class="fl fl4"><input id="qn" placeholder="Qarz egasi" autocomplete="off"><input id="qp" inputmode="tel" placeholder="Telefon" autocomplete="off"><input id="qa" inputmode="decimal" placeholder="Summa"><button class="add" data-act="addDebt" aria-label="Qo‘shish">+</button></div>
     <div class="jq"><span>Jami qarz</span><b id="hDebt">0</b></div></section>
@@ -33,12 +33,13 @@
   <section class="row r5" data-s="6">
     <div class="rh"><i>6</i><h2 data-tk="r6">Jami hisob</h2><span class="sp"></span><button class="gal" data-act="gal" id="gal">Galereyaga saqlash</button></div>
     <div class="eq">
-      <div class="sc"><small>Xarajat (3)</small><b id="fExp"></b></div><i>=</i>
+      <div class="sc"><small>Xarajat (3)</small><b id="fExp"></b></div><i>+</i>
+      <div class="sc"><small>Qarz (4)</small><b id="fDebt"></b></div><i>=</i>
       <div class="sc"><small>Jami chiqim</small><b id="fOut"></b></div>
     </div>
     <div class="eq eb">
-      <div class="sc"><small>Chiqim</small><b id="fOut2"></b></div><i>−</i>
-      <div class="sc"><small>Tushum (2)</small><b id="fRev"></b></div><i>=</i>
+      <div class="sc"><small>Tushum (2)</small><b id="fRev"></b></div><i>−</i>
+      <div class="sc"><small>Chiqim</small><b id="fOut2"></b></div><i>=</i>
       <div class="sc res" id="fRes"><small id="fFl">FOYDA</small><b id="fF"></b></div>
     </div>
     <div class="n5"><span>Foyda hisobi (5-qator)</span><b id="fP5"></b></div>
@@ -59,4 +60,3 @@
 <script src="app.js"></script>
 </body>
 </html>
-
