@@ -12,6 +12,7 @@ var $=function(i){return document.getElementById(i)};
 function iso(d){var m=d.getMonth()+1,k=d.getDate();return d.getFullYear()+"-"+(m<10?"0":"")+m+"-"+(k<10?"0":"")+k}
 function addDays(s,n){var d=new Date(s+"T00:00:00");d.setDate(d.getDate()+n);return iso(d)}
 function num(v){var x=parseFloat(String(v).replace(",",".").replace(/\s/g,""));return isFinite(x)?x:0}
+function sumExpr(v){var t=0,ok=0;String(v).split("+").forEach(function(x){var n=numM(x);if(n){t+=n;ok=1}});return ok?r2(t):0}
 function numM(v){var s=String(v).trim();if(/^\d{1,3}([.,\s\u00a0]\d{3})+$/.test(s))return parseFloat(s.replace(/\D/g,""));return num(v)}
 function q(n){return Number(n.toFixed(2)).toLocaleString("ru-RU")}
 function sh(n){return Math.round(n).toLocaleString("ru-RU")}
@@ -31,14 +32,14 @@ function dayTot(d){
   var r=0,e=0,q2=0,p5=0,kg=0;P.forEach(function(p){var c=calc(p,d);r+=c.rev;p5+=c.p5;kg+=c.sold});kg=r2(kg);
   ((db.days[d]&&db.days[d].exp)||[]).forEach(function(x){e+=x.amt});
   db.debts.forEach(function(x){if(x.date===d)q2+=x.pb});
-  return{p5:p5,kg:kg,rev:r,exp:e,debt:q2,profit:e-r};
+  return{p5:p5,kg:kg,rev:r,exp:e,debt:q2,out:e+q2,profit:r-(e+q2)};
 }
 function period(pre){
   var set={},t={rev:0,out:0,net:0,f:0,z:0,exp:0,debt:0,p5:0};Object.keys(db.days).forEach(function(k){set[k]=1});db.debts.forEach(function(x){set[x.date]=1});
-  Object.keys(set).forEach(function(k){if(k.indexOf(pre)===0){var x=dayTot(k);t.rev+=x.rev;t.out+=x.exp;t.exp+=x.exp;t.debt+=x.debt;t.p5+=x.p5}});
-  t.net=t.out-t.rev;t.f=Math.max(0,t.net);t.z=Math.max(0,-t.net);return t;
+  Object.keys(set).forEach(function(k){if(k.indexOf(pre)===0){var x=dayTot(k);t.rev+=x.rev;t.out+=x.exp+x.debt;t.exp+=x.exp;t.debt+=x.debt;t.p5+=x.p5}});
+  t.net=t.rev-t.out;t.f=Math.max(0,t.net);t.z=Math.max(0,-t.net);return t;
 }
-function periodL(l){var t={rev:0,exp:0,debt:0};l.forEach(function(k){var x=dayTot(k);t.rev+=x.rev;t.exp+=x.exp;t.debt+=x.debt});t.net=t.exp-t.rev;t.f=Math.max(0,t.net);t.z=Math.max(0,-t.net);return t}
+function periodL(l){var t={rev:0,exp:0,debt:0};l.forEach(function(k){var x=dayTot(k);t.rev+=x.rev;t.exp+=x.exp;t.debt+=x.debt});t.out=t.exp+t.debt;t.net=t.rev-t.out;t.f=Math.max(0,t.net);t.z=Math.max(0,-t.net);return t}
 function r4(x){return !x.paid&&!x.l7}
 function keyOf(x){return String(x.name).trim().toLowerCase()}
 function recalc(x){var a=x.g;x.log.forEach(function(l){a+=l.a});x.amt=Math.max(0,a);x.paid=x.amt<=0.0001}
@@ -89,9 +90,9 @@ function refresh(){
   var t=dayTot(d),mo=period(d.slice(0,7)),yr=period(d.slice(0,4));
   $("k5").textContent=q(t.kg)+" kg";$("s5").textContent=sh(t.p5);$("fP5").textContent=money(t.p5);$("tRev").textContent=money(rev);$("tExp").textContent=money(t.exp);$("tDebt").textContent=money(d4s);
   $("fRev").textContent=sh(t.rev);$("fExp").textContent=sh(t.exp);
-  var sfx=d===iso(new Date())?" · BUGUN":" · "+d.slice(5);$("fOut").textContent=$("fOut2").textContent=sh(t.exp);$("fF").textContent=(t.profit<0?"−":"")+sh(Math.abs(t.profit));$("fFl").textContent="FOYDA"+sfx;
+  var sfx=d===iso(new Date())?" · BUGUN":" · "+d.slice(5);$("fDebt").textContent=sh(t.debt);$("fOut").textContent=$("fOut2").textContent=sh(t.out);$("fF").textContent=(t.profit<0?"−":"")+sh(Math.abs(t.profit));$("fFl").textContent="FOYDA"+sfx;
   var wd=new Date(d+"T00:00:00"),ws=addDays(d,-((wd.getDay()+6)%7)),wl=[];for(var wi=0;wi<7;wi++)wl.push(addDays(ws,wi));
-  var wk=periodL(wl);function rw(l,v){return"<span>"+l+"</span><b class=fy>"+sh(v.f)+"</b><b class=zr>"+sh(v.z)+"</b><b class=rx>"+sh(v.exp)+"</b>"}
+  var wk=periodL(wl);function rw(l,v){return"<span>"+l+"</span><b class=fy>"+sh(v.f)+"</b><b class=zr>"+sh(v.z)+"</b><b class=rx>"+sh(v.exp+v.debt)+"</b>"}
   $("fExt").innerHTML="<span></span><em>Foyda</em><em>Zarar</em><em>Rasxod</em>"+rw("Hafta",wk)+rw("Oy",mo)+rw("Yil",yr);
   var ne=((db.days[d]&&db.days[d].exp)||[]).length,nd=db.debts.filter(function(x){return r4(x)&&x.date===d}).length;
   $("lExp").textContent="Ro‘yxat ("+ne+")";$("lDebt").textContent="Ro‘yxat ("+nd+")";$("hDebt").textContent=money(d4s);
@@ -183,7 +184,7 @@ document.addEventListener("click",function(e){
     st.pm=null;save();refresh();return}
   if(a==="listExp"){st.sheet="exp";sheet();return}
   if(a==="listDebt"){st.sheet="debt";sheet();return}
-  if(a==="addExp"){var am=numM($("ea").value);if(!am){$("ea").focus();return}wD(st.date).exp.push({id:"e"+Date.now(),name:$("en").value.trim()||"Xarajat",amt:am});$("en").value="";$("ea").value="";$("en").focus()}
+  if(a==="addExp"){var am=sumExpr($("ea").value);if(!am){$("ea").focus();return}var nm=$("en").value.trim()||"Xarajat",ED=wD(st.date),ex0=ED.exp.filter(function(z){return z.name.toLowerCase()===nm.toLowerCase()})[0];if(ex0)ex0.amt=r2(ex0.amt+am);else ED.exp.push({id:"e"+Date.now(),name:nm,amt:am});$("en").value="";$("ea").value="";$("en").focus()}
   else if(a==="delExp"){var D=wD(st.date);D.exp=D.exp.filter(function(x){return x.id!==t.dataset.id})}
   else if(a==="addDebt"){var n=$("qn").value.trim(),m=numM($("qa").value);if(!n||!m){(n?$("qa"):$("qn")).focus();return}db.debts.push({id:"q"+Date.now(),name:n,phone:$("qp").value.trim(),amt:m,a4:m,g:m,pb:m,log:[],ts:Date.now(),date:st.date,paid:false});$("qn").value="";$("qp").value="";$("qa").value="";$("qn").focus()}
   else if(a==="payDebt"){db.debts.forEach(function(x){if(x.id!==t.dataset.id)return;if(!x.paid){x.log.push({t:Date.now(),d:st.date,k:"p",a:-x.amt});recalc(x)}else{for(var i=x.log.length-1;i>=0;i--){if(x.log[i].k==="p"){x.log.splice(i,1);break}}recalc(x)}})}
@@ -215,15 +216,15 @@ function drawReport(ctx,W,H){
   sec("4",ttl("r4"),"#8b5cf6");
   var ds=db.debts.filter(function(x){return x.date===d});
   if(!ds.length){line("Qarz yo‘q","0")}else ds.forEach(function(x){line(x.name+(x.paid?" (to‘landi)":""),sh(x.pb)+" so‘m")});
-  line("Jami qarz (foydaga kirmaydi)",sh(t.debt)+" so‘m",true,"#6d28d9");
+  line("Jami qarz (chiqimga qo‘shiladi)",sh(t.debt)+" so‘m",true,"#6d28d9");
   sec("5",ttl("r5"),"#06b6d4");
   var r5=P.map(function(p){return{p:p,c:calc(p,d)}}).filter(function(r){return r.c.has&&r.c.pf});
   if(!r5.length)line("Ma’lumot yo‘q","0");else r5.forEach(function(r){line(r.p+"  "+q(r.c.sold)+" kg × "+sh(r.c.pf),sh(r.c.p5)+" so‘m")});
   line("Jami "+q(t.kg)+" kg · Jami foyda",sh(t.p5)+" so‘m",true,"#0e7490");
   sec("6",ttl("r6"),"#ec4899");
-  line("Xarajat = Jami chiqim",sh(t.exp)+" so‘m");
+  line("Xarajat (3) + Qarz (4) = Jami chiqim",sh(t.out)+" so‘m");
   line("Tushum (2)",sh(t.rev)+" so‘m");
-  y+=4;B(y-34,96,"#16213a");T("FOYDA (Chiqim − Tushum)",64,y+12,27,"500","#c9d3ea");T((t.profit<0?"−":"")+sh(Math.abs(t.profit))+" so‘m",W-64,y+16,44,"700","#5eead4","right");y+=100;
+  y+=4;B(y-34,96,"#16213a");T("FOYDA (Tushum − Chiqim)",64,y+12,27,"500","#c9d3ea");T((t.profit<0?"−":"")+sh(Math.abs(t.profit))+" so‘m",W-64,y+16,44,"700","#5eead4","right");y+=100;
   return y+24;
 }
 async function savePng(blob,name){
@@ -302,7 +303,7 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
 function effTheme(){return db.theme==="light"||db.theme==="dark"?db.theme:(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")}
 function applyTheme(){var r=document.documentElement;if(db.theme==="light"||db.theme==="dark")r.setAttribute("data-theme",db.theme);else r.removeAttribute("data-theme");var tb=$("thm");if(tb)tb.textContent=effTheme()==="dark"?"☀":"☾"}
 function pad(n){return(n<10?"0":"")+n}
-function fin(v){v.out=v.exp;v.net=v.out-v.rev;return v}
+function fin(v){v.out=v.exp+v.debt;v.net=v.rev-v.out;return v}
 function norm(x){return fin({rev:x.rev,exp:x.exp,debt:x.debt,p5:x.p5})}
 function sumL(a){var t={rev:0,exp:0,debt:0,p5:0};a.forEach(function(r){var v=r.v;t.rev+=v.rev;t.exp+=v.exp;t.debt+=v.debt;t.p5+=v.p5});return fin(t)}
 function sn(n){return(n<0?"−":"")+sh(Math.abs(n))}
@@ -315,9 +316,9 @@ function report(kind){
   else{title="1 yillik hisob";rng=y+"-yil";for(i=1;i<=12;i++)items.push({l:MS[i-1],v:period(y+"-"+pad(i))})}
   var t=sumL(items);
   function row(l,v,c){return"<div class='rr "+(c||"")+"'><span>"+l+"</span><span>"+sh(v.rev)+"</span><span>"+sh(v.out)+"</span><span>"+sh(v.p5)+"</span><b>"+sn(v.net)+"</b></div>"}
-  var h="<div class=rg>"+rng+"</div><div class=cards><div class='cd big'><small>NATIJA (Chiqim − Tushum)</small><b>"+sn(t.net)+" so‘m</b></div>"+
+  var h="<div class=rg>"+rng+"</div><div class=cards><div class='cd big'><small>FOYDA (Tushum − Chiqim)</small><b>"+sn(t.net)+" so‘m</b></div>"+
   "<div class=cd><small>Jami tushum</small><b>"+money(t.rev)+"</b></div><div class=cd><small>Jami chiqim</small><b>"+money(t.out)+"</b></div>"+
-  "<div class=cd><small>Xarajatlar</small><b>"+money(t.exp)+"</b></div><div class=cd><small>Qarzlar (foydaga kirmaydi)</small><b>"+money(t.debt)+"</b></div>"+
+  "<div class=cd><small>Xarajatlar</small><b>"+money(t.exp)+"</b></div><div class=cd><small>Qarzlar (chiqimga qo‘shiladi)</small><b>"+money(t.debt)+"</b></div>"+
   "<div class='cd' style='grid-column:1/-1'><small>Foyda hisobi (5-qator)</small><b>"+money(t.p5)+"</b></div></div>"+
   "<div class=rpt><div class='rr h'><span>Sana</span><span>Tushum</span><span>Chiqim</span><span>Foyda (5)</span><span>Natija</span></div>"+
   (items.length?items.map(function(r){return row(r.l,r.v)}).join("")+row("Jami",t,"tl"):"<div class=empty>Ma’lumot yo‘q</div>")+"</div>";
